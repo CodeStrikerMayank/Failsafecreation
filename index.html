@@ -32,9 +32,10 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.8;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            font-size: 1.15rem; /* Improved for readability */
         }
 
         /* --- Global Aesthetics --- */
@@ -57,146 +58,216 @@
         /* --- Navbar --- */
         .nav {
             position: fixed;
-            top: 0; width: 100%; padding: 1rem 2rem;
+            top: 0; width: 100%; padding: 1.25rem 2.5rem;
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--glass); backdrop-filter: blur(10px);
+            background: var(--glass); backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border); z-index: 100;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
         }
 
-        .nav-brand { display: flex; align-items: center; gap: 1rem; }
-        .logo { height: 28px; width: auto; filter: drop-shadow(0 0 5px var(--accent-glow)); }
+        .nav-brand { display: flex; align-items: center; gap: 1.5rem; }
+        .logo { height: 32px; width: auto; filter: drop-shadow(0 0 8px var(--accent-glow)); }
 
-        .presence { display: flex; align-items: center; gap: 0.75rem; }
+        .presence { display: flex; align-items: center; gap: 1rem; }
         .btn-github {
-            display: flex; align-items: center; gap: 0.5rem;
+            display: flex; align-items: center; gap: 0.6rem;
             background: var(--accent); color: #000;
-            padding: 0.4rem 0.8rem; border-radius: 4px;
+            padding: 0.5rem 1rem; border-radius: 4px;
             text-decoration: none; font-weight: 700;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 10px var(--accent-glow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px var(--accent-glow);
             white-space: nowrap;
         }
-        .btn-github:hover { transform: translateY(-1px); box-shadow: 0 0 15px var(--accent); }
+        .btn-github:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 0 25px var(--accent); }
 
-        /* --- Hero --- */
-        .hero {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            position: relative; text-align: center; padding: 1.5rem; overflow: hidden;
-        }
-
-        .hero::before {
-            content: ""; position: absolute; inset: 0;
-            background: linear-gradient(to bottom, transparent 50%, var(--bg) 100%);
-            z-index: 1;
-        }
-
-        .hero-v {
-            position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%;
-            transform: translate(-50%, -50%); z-index: 0; opacity: 0.4; filter: grayscale(50%) contrast(1.1); object-fit: cover;
-        }
-
-        .hero-content { position: relative; z-index: 2; }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 12vw, 7rem); font-weight: 800; letter-spacing: -0.04em;
-            text-transform: uppercase; line-height: 0.85; margin-bottom: 1.5rem;
-            color: #fff;
-        }
-
-        /* --- Animations & Transitions --- */
-        .reveal, .reveal-scale, .reveal-slide-right, .reveal-slide-left, .stagger-item {
-            opacity: 0;
-            transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
-            will-change: transform, opacity, filter;
-        }
-
-        .reveal { transform: translateY(30px); filter: blur(10px); }
-        .reveal.active { opacity: 1; transform: translateY(0); filter: blur(0); }
-
-        .reveal-scale { transform: scale(0.95); filter: blur(15px); }
-        .reveal-scale.active { opacity: 1; transform: scale(1); filter: blur(0); }
-
-        .reveal-slide-right { transform: translateX(-40px); }
-        .reveal-slide-right.active { opacity: 1; transform: translateX(0); }
-        
-        .reveal-slide-left { transform: translateX(40px); }
-        .reveal-slide-left.active { opacity: 1; transform: translateX(0); }
-
-        .stagger-container.active .stagger-item { opacity: 1; transform: translateY(0); filter: blur(0); }
-        .stagger-item { transform: translateY(20px); filter: blur(5px); }
-        .stagger-item:nth-child(1) { transition-delay: 0.1s; }
-        .stagger-item:nth-child(2) { transition-delay: 0.2s; }
-        .stagger-item:nth-child(3) { transition-delay: 0.3s; }
-        .stagger-item:nth-child(4) { transition-delay: 0.4s; }
-
-        /* --- Sections --- */
-        section { padding: 6rem 1.5rem; max-width: 1100px; margin: 0 auto; position: relative; }
-        
+        /* --- Bluish Blur Focus Transition --- */
         .section-screen {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
+            background: var(--bg);
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+            perspective: 1000px;
         }
 
+        .blur-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 100, 255, 0.15) 0%, var(--bg) 80%);
+            z-index: 20;
+            pointer-events: none;
+            transition: all 2s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(50px);
+            opacity: 1;
+        }
+
+        .section-screen.active .blur-overlay {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+            transform: scale(1.1);
+        }
+
+        .section-content {
+            position: relative;
+            z-index: 1;
+            filter: blur(20px);
+            transform: scale(0.98) translateY(20px);
+            opacity: 0;
+            transition: all 1.8s cubic-bezier(0.23, 1, 0.32, 1);
+            transition-delay: 0.2s;
+            will-change: filter, transform, opacity;
+        }
+
+        .section-screen.active .section-content {
+            filter: blur(0px);
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* --- Hero Integration --- */
+        .hero-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-v {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) brightness(0.6) blue(10px);
+            transition: all 2.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .section-screen.active .hero-v {
+            filter: contrast(1.1) brightness(0.6) blur(0px);
+            opacity: 0.6;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 15vw, 9.5rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 0.8;
+            margin-bottom: 2rem;
+            color: #fff;
+            letter-spacing: -0.05em;
+            text-shadow: 0 0 50px rgba(0, 255, 170, 0.3);
+        }
+
+        /* --- Staggered Loading --- */
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .section-screen.active .stagger-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-item:nth-child(1) { transition-delay: 0.5s; }
+        .stagger-item:nth-child(2) { transition-delay: 0.6s; }
+        .stagger-item:nth-child(3) { transition-delay: 0.7s; }
+        .stagger-item:nth-child(4) { transition-delay: 0.8s; }
+
         /* --- UI Elements --- */
+        section { padding: 8rem 2rem; max-width: 1300px; margin: 0 auto; }
+
+        h2 { font-size: clamp(2.5rem, 8vw, 6rem); letter-spacing: -0.06em; margin-bottom: 2rem; line-height: 0.9; text-transform: uppercase; color: #fff; }
+        p { font-size: 1.25rem; color: var(--text-dim); max-width: 65ch; margin-bottom: 2.5rem; line-height: 1.6; }
+
         .stats-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem; margin-top: 3rem;
+            gap: 1.5rem; margin-top: 3rem;
         }
 
         .stat-card {
-            background: var(--glass); border: 1px solid var(--border); padding: 1.5rem;
-            border-radius: 6px; font-family: 'JetBrains Mono', monospace;
-            transition: border-color 0.3s ease;
+            background: var(--glass); border: 1px solid var(--border); padding: 2rem;
+            border-radius: 12px; font-family: 'JetBrains Mono', monospace;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .stat-card:hover { border-color: var(--accent); }
-        .stat-val { color: var(--accent); font-size: 1.5rem; font-weight: 700; display: block; margin-top: 0.25rem; }
+        .stat-card:hover { border-color: var(--accent); transform: translateY(-5px); background: var(--glass-strong); box-shadow: 0 20px 40px rgba(0, 255, 170, 0.1); }
+        .stat-val { color: var(--accent); font-size: 2rem; font-weight: 700; display: block; margin-top: 0.5rem; }
 
         .content-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-bottom: 8rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;
         }
 
         .viewport {
-            background: #000; border: 1px solid var(--border); border-radius: 6px;
+            background: #000; border: 1px solid var(--border); border-radius: 16px;
             aspect-ratio: 16/9; position: relative; overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
         }
-        .viewport video { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
-        .hud {
-            position: absolute; inset: 15px; pointer-events: none; z-index: 2;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--accent); opacity: 0.8;
-        }
+        .viewport video { width: 100%; height: 100%; object-fit: cover; }
 
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
-        .info-card { background: var(--glass); border: 1px solid var(--border); padding: 2.5rem; border-radius: 8px; transition: all 0.5s ease; }
-        .info-card:hover { background: var(--glass-strong); border-color: var(--accent); transform: translateY(-10px); }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 4rem; }
+        .info-card { background: var(--glass); border: 1px solid var(--border); padding: 2.5rem; border-radius: 16px; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .info-card:hover { border-color: var(--accent); transform: translateY(-10px); background: var(--glass-strong); box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
 
-        .feature-list { list-style: none; margin-top: 1.5rem; }
-        .feature-list li { margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative; color: var(--text-dim); font-size: 0.9rem; }
-        .feature-list li::before { content: ">>"; position: absolute; left: 0; color: var(--accent); font-family: 'JetBrains Mono'; font-size: 0.7rem; }
+        .feature-list { list-style: none; margin-top: 2rem; }
+        .feature-list li { margin-bottom: 1rem; padding-left: 2.5rem; position: relative; color: var(--text-dim); font-size: 1.1rem; }
+        .feature-list li::before { content: ">>"; position: absolute; left: 0; color: var(--accent); font-family: 'JetBrains Mono'; font-size: 0.9rem; top: 0.2rem; }
 
-        .table-wrap { overflow-x: auto; background: var(--glass); border: 1px solid var(--border); border-radius: 6px; }
+        .table-wrap { overflow-x: auto; background: var(--glass); border: 1px solid var(--border); border-radius: 16px; margin-top: 4rem; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-        th { font-family: 'JetBrains Mono', monospace; color: var(--text-dim); text-transform: uppercase; font-size: 0.65rem; }
+        th, td { padding: 1.5rem 2rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 1.1rem; }
+        th { font-family: 'JetBrains Mono', monospace; color: var(--text-dim); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.2em; }
         td { color: var(--text-dim); }
-        td strong { color: var(--text); }
+        td strong { color: var(--text); font-weight: 700; }
 
+        /* --- Mobile Responsive Optimizations --- */
         @media (max-width: 900px) {
-            .content-row { grid-template-columns: 1fr; gap: 2rem; }
-            .section-screen { padding: 4rem 1.5rem; }
+            body { font-size: 1rem; }
+            .nav { padding: 1rem 1.5rem; }
+            .presence { display: none; } /* Hide creator text on small phones to save space */
+
+            section { padding: 5rem 1.5rem; }
+            h2 { font-size: 2.8rem; letter-spacing: -0.04em; }
+            p { font-size: 1.15rem; }
+
+            .hero h1 { font-size: 4.5rem; }
+            .hero p { font-size: 1.1rem !important; }
+
+            .content-row { grid-template-columns: 1fr; gap: 3rem; }
+            .info-grid { grid-template-columns: 1fr; }
+            .info-card { padding: 2rem; }
+
+            .stat-val { font-size: 1.8rem; }
+            .stat-card { padding: 1.5rem; }
+
+            .table-wrap { margin-top: 2rem; }
+            th, td { padding: 1rem 1.2rem; font-size: 1rem; }
+
+            footer { padding: 6rem 1.5rem 4rem; }
         }
 
-        footer { padding: 6rem 1.5rem 2rem; text-align: center; border-top: 1px solid var(--border); }
-    </style>
-</head>
-<body>
+        @media (max-width: 480px) {
+            h2 { font-size: 2.2rem; }
+            .hero h1 { font-size: 3.5rem; }
+            .nav-brand span { font-size: 0.6rem; }
+            .logo { height: 24px; }
+        }
 
-    <div class="mesh"></div>
+        footer { padding: 12rem 2rem 6rem; text-align: center; border-top: 1px solid var(--border); }
 
-    <nav class="nav">
+        </style>
+        </head>
+        <body>
+
+        <div class="mesh"></div>
+
+        <nav class="nav">
         <div class="nav-brand">
             <img src="media/1773077855945.png" alt="CORE SHADOW" class="logo">
             <div style="color: var(--accent); letter-spacing: 0.1em;">STATUS: ONLINE</div>
@@ -205,204 +276,222 @@
             <span style="opacity: 0.8; font-size: 0.65rem; font-family: 'JetBrains Mono';">CREATOR: MAYANK BHATT</span>
         </div>
         <a href="https://github.com/CodeStrikerMayank" target="_blank" class="btn-github">GITHUB</a>
-    </nav>
+        </nav>
 
-    <section class="hero section-screen">
-        <video class="hero-v" autoplay muted loop playsinline>
-            <source src="media/Untitled_Project_2_4K.mov" type="video/quicktime">
-            <source src="media/istockphoto-1502523206-640_adpp_is.mp4" type="video/mp4">
-        </video>
-        <div class="hero-content reveal-scale">
-            <h1>UAV / Saturation</h1>
-            <p style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--text-dim); max-width: 700px; margin: 0 auto; letter-spacing: 0.05em;">Aerodynamic frameworks, strategic operational groups, and advanced mission capabilities.</p>
-        </div>
-    </section>
-
-    <!-- Aerodynamic Profiles -->
-    <section id="kinematics" class="section-screen">
-        <div class="reveal">
-            <h2 style="font-size: 3rem; margin-bottom: 1rem;">Aerodynamic Profiles</h2>
-            <p style="color: var(--text-dim); margin-bottom: 4rem; max-width: 800px;">The physical design of a UAV dictates its flight envelope, endurance limitations, and deployment requirements.</p>
-        </div>
-        
-        <div class="info-grid stagger-container">
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">FIXED-WING</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">Rigid airfoil requiring forward momentum to generate lift. High lift-to-drag ratio for sustained cruising.</p>
-                <ul class="feature-list">
-                    <li>Optimized for: Long-endurance, mapping</li>
-                    <li>Launch: Runway / Catapult</li>
-                    <li>Optimal Use: HALE missions, ISR</li>
-                </ul>
-            </div>
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">MULTI-ROTOR</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">Vertical-axis rotors providing VTOL capabilities and localized hovering stability.</p>
-                <ul class="feature-list">
-                    <li>Optimized for: Localized precision</li>
-                    <li>Launch: Vertical Takeoff (VTOL)</li>
-                    <li>Optimal Use: Urban tactical, inspection</li>
-                </ul>
-            </div>
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">SINGLE-ROTOR</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">Primary aerodynamic rotor with tail torque control. Higher efficiency than multi-rotors.</p>
-                <ul class="feature-list">
-                    <li>Optimized for: Heavy payload, stability</li>
-                    <li>Engine: Internal Combustion possible</li>
-                    <li>Optimal Use: Logistical transport</li>
-                </ul>
-            </div>
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">HYBRID VTOL</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">Combines vertical lift motors with a fixed-wing chassis for runway-independent long-range flight.</p>
-                <ul class="feature-list">
-                    <li>Optimized for: Agile deployment</li>
-                    <li>Range: High-speed BVLOS</li>
-                    <li>Optimal Use: Expeditionary Recon</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Strategic Classification Table -->
-    <section id="classification" class="section-screen">
-        <h2 class="reveal" style="font-size: 3rem; margin-bottom: 3rem;">Strategic Military Classification</h2>
-        <div class="table-wrap reveal">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Classification</th>
-                        <th>Altitude (AGL)</th>
-                        <th>Weight</th>
-                        <th>Speed</th>
-                        <th>Primary Operational Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Group 1 (Micro/Nano)</strong></td>
-                        <td>&lt; 1,200 ft</td>
-                        <td>&lt; 20 lbs</td>
-                        <td>&lt; 100 knots</td>
-                        <td>Squad-level tactical reconnaissance, patrol overwatch.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Group 2 (Small Tactical)</strong></td>
-                        <td>&lt; 3,500 ft</td>
-                        <td>21 – 55 lbs</td>
-                        <td>&lt; 250 knots</td>
-                        <td>Battalion-level target acquisition, comms relay.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Group 3 (Medium)</strong></td>
-                        <td>&lt; 18,000 ft</td>
-                        <td>56 – 1,320 lbs</td>
-                        <td>&lt; 250 knots</td>
-                        <td>Advanced tactical intelligence, localized EW.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Group 4 (MALE)</strong></td>
-                        <td>&lt; 18,000 ft</td>
-                        <td>&gt; 1,320 lbs</td>
-                        <td>Varies</td>
-                        <td>Precision strike, maritime patrol, armed overwatch.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Group 5 (HALE / Strategic)</strong></td>
-                        <td>&gt; 18,000 ft</td>
-                        <td>&gt; 1,320 lbs</td>
-                        <td>Varies</td>
-                        <td>Theater-wide surveillance, global C3 network.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- Mission Roles -->
-    <section id="missions" class="section-screen">
-        <h2 class="reveal" style="font-size: 3rem; margin-bottom: 1rem;">Mission Roles & Telemetry</h2>
-        <p class="reveal" style="color: var(--text-dim); margin-bottom: 4rem; max-width: 800px;">UAVs are differentiated by their payload integrations and autonomous processing capabilities.</p>
-        
-        <div class="info-grid stagger-container">
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">UCAVs (Combat)</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">Engineered to deploy ordnance with complex telemetry and secure BVLOS satellite datalinks.</p>
-            </div>
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">LOITERING MUNITIONS</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">"Kamikaze" drones that loiter and lock onto high-value targets for kinetic impact.</p>
-            </div>
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">ISR (Intelligence)</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">Advanced sensor suites (EO/IR, SAR) for extracting and processing real-time data streams.</p>
-            </div>
-            <div class="info-card stagger-item">
-                <h4 style="color: var(--accent); margin-bottom: 1rem;">EW & SWARM</h4>
-                <p style="font-size: 0.85rem; color: var(--text-dim);">Disrupting infrastructure via radar jamming and coordinating autonomous micro-node swarms.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Original Scenario Example -->
-    <section id="scenarios" class="section-screen">
-        <h2 class="reveal" style="font-size: 3rem; margin-bottom: 3rem;">Tactical Deployment</h2>
-        <div class="content-row">
-            <div class="text-side reveal-slide-right">
-                <h3 style="color: var(--accent); margin-bottom: 1rem;">Urban Saturation Swarm</h3>
-                <p>Deploying 100+ micro-nodes in a decentralized mesh. Individual units navigate complex geometry while maintaining 360° awareness through distributed processing.</p>
-                <ul class="feature-list">
-                    <li>Dynamic Pathfinding</li>
-                    <li>Self-Healing Mesh Network</li>
-                    <li>Distributed Signal Processing</li>
-                </ul>
-            </div>
-            <div class="media-side reveal-slide-left">
-                <div class="viewport">
-                    <div class="hud"><span>ACTIVE_SWARM_LOGIC</span></div>
-                    <video autoplay muted loop playsinline>
-                        <source src="media/istockphoto-2266365411-640_adpp_is.mp4" type="video/mp4">
-                    </video>
+        <div class="main-content">
+        <section class="hero section-screen">
+            <div class="blur-overlay"></div>
+            <div class="section-content hero-container">
+                <video class="hero-v" autoplay muted loop playsinline>
+                    <source src="media/Untitled_Project_2_4K.mov" type="video/quicktime">
+                    <source src="media/istockphoto-1502523206-640_adpp_is.mp4" type="video/mp4">
+                </video>
+                <div class="hero-content">
+                    <h1>UAV / Saturation</h1>
+                    <p style="font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; color: var(--text-dim); max-width: 850px; margin: 0 auto; letter-spacing: 0.05em;">Aerodynamic frameworks, strategic operational groups, and advanced mission capabilities.</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="lab" class="section-screen">
-        <div class="reveal" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
-            <h2 style="font-size: 2.5rem; letter-spacing: -0.02em;">Engineering Lab</h2>
-            <span style="font-family: 'JetBrains Mono'; color: var(--accent); font-size: 0.8rem;">[ RESEARCH_FACILITY_ALPHA ]</span>
-        </div>
-        <div class="stats-grid stagger-container">
-            <div class="stat-card stagger-item">
-                <span style="font-size: 0.65rem; opacity: 0.5; letter-spacing: 0.1em;">CPU_LOAD</span>
-                <span class="stat-val" id="cpu">--</span>
-            </div>
-            <div class="stat-card stagger-item">
-                <span style="font-size: 0.65rem; opacity: 0.5; letter-spacing: 0.1em;">LATENCY</span>
-                <span class="stat-val" id="lat">--</span>
-            </div>
-            <div class="stat-card stagger-item">
-                <span style="font-size: 0.65rem; opacity: 0.5; letter-spacing: 0.1em;">SIGNAL</span>
-                <span class="stat-val" id="sig">--</span>
-            </div>
-            <div class="stat-card stagger-item">
-                <span style="font-size: 0.65rem; opacity: 0.5; letter-spacing: 0.1em;">NODES</span>
-                <span class="stat-val">64</span>
-            </div>
-        </div>
-    </section>
+        <!-- Aerodynamic Profiles -->
+        <section id="kinematics" class="section-screen">
+            <div class="blur-overlay"></div>
+            <div class="section-content">
+                <h2>Aerodynamic Profiles</h2>
+                <p>The physical design of a UAV dictates its flight envelope, endurance limitations, and deployment requirements.</p>
 
-    <footer style="padding: 6rem 1.5rem 2rem; text-align: center; border-top: 1px solid var(--border);">
-        <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 1rem; letter-spacing: 0.1em;">PROUDLY CREATED BY MAYANK BHATT // 2026</p>
-        <p style="font-size: 0.6rem; color: var(--text-dim); opacity: 0.5; font-family: 'JetBrains Mono', monospace;">UAV_OS Tactical Specification Portal // All nodes online</p>
-    </footer>
+                <div class="info-grid stagger-container">
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">FIXED-WING</h4>
+                        <p>Rigid airfoil requiring forward momentum to generate lift. High lift-to-drag ratio for sustained cruising.</p>
+                        <ul class="feature-list">
+                            <li>Optimized for: Long-endurance, mapping</li>
+                            <li>Launch: Runway / Catapult</li>
+                            <li>Optimal Use: HALE missions, ISR</li>
+                        </ul>
+                    </div>
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">MULTI-ROTOR</h4>
+                        <p>Vertical-axis rotors providing VTOL capabilities and localized hovering stability.</p>
+                        <ul class="feature-list">
+                            <li>Optimized for: Localized precision</li>
+                            <li>Launch: Vertical Takeoff (VTOL)</li>
+                            <li>Optimal Use: Urban tactical, inspection</li>
+                        </ul>
+                    </div>
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">SINGLE-ROTOR</h4>
+                        <p>Primary aerodynamic rotor with tail torque control. Higher efficiency than multi-rotors.</p>
+                        <ul class="feature-list">
+                            <li>Optimized for: Heavy payload, stability</li>
+                            <li>Engine: Internal Combustion possible</li>
+                            <li>Optimal Use: Logistical transport</li>
+                        </ul>
+                    </div>
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">HYBRID VTOL</h4>
+                        <p>Combines vertical lift motors with a fixed-wing chassis for runway-independent long-range flight.</p>
+                        <ul class="feature-list">
+                            <li>Optimized for: Agile deployment</li>
+                            <li>Range: High-speed BVLOS</li>
+                            <li>Optimal Use: Expeditionary Recon</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <script>
+        <!-- Strategic Classification Table -->
+        <section id="classification" class="section-screen">
+            <div class="blur-overlay"></div>
+            <div class="section-content">
+                <h2>Strategic Military Classification</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Classification</th>
+                                <th>Altitude (AGL)</th>
+                                <th>Weight</th>
+                                <th>Speed</th>
+                                <th>Primary Operational Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Group 1 (Micro/Nano)</strong></td>
+                                <td>&lt; 1,200 ft</td>
+                                <td>&lt; 20 lbs</td>
+                                <td>&lt; 100 knots</td>
+                                <td>Squad-level tactical reconnaissance, patrol overwatch.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Group 2 (Small Tactical)</strong></td>
+                                <td>&lt; 3,500 ft</td>
+                                <td>21 – 55 lbs</td>
+                                <td>&lt; 250 knots</td>
+                                <td>Battalion-level target acquisition, comms relay.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Group 3 (Medium)</strong></td>
+                                <td>&lt; 18,000 ft</td>
+                                <td>56 – 1,320 lbs</td>
+                                <td>&lt; 250 knots</td>
+                                <td>Advanced tactical intelligence, localized EW.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Group 4 (MALE)</strong></td>
+                                <td>&lt; 18,000 ft</td>
+                                <td>&gt; 1,320 lbs</td>
+                                <td>Varies</td>
+                                <td>Precision strike, maritime patrol, armed overwatch.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Group 5 (HALE / Strategic)</strong></td>
+                                <td>&gt; 18,000 ft</td>
+                                <td>&gt; 1,320 lbs</td>
+                                <td>Varies</td>
+                                <td>Theater-wide surveillance, global C3 network.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Roles -->
+        <section id="missions" class="section-screen">
+            <div class="blur-overlay"></div>
+            <div class="section-content">
+                <h2>Mission Roles & Telemetry</h2>
+                <p>UAVs are differentiated by their payload integrations and autonomous processing capabilities.</p>
+
+                <div class="info-grid stagger-container">
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">UCAVs (Combat)</h4>
+                        <p>Engineered to deploy ordnance with complex telemetry and secure BVLOS satellite datalinks.</p>
+                    </div>
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">LOITERING MUNITIONS</h4>
+                        <p>"Kamikaze" drones that loiter and lock onto high-value targets for kinetic impact.</p>
+                    </div>
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">ISR (Intelligence)</h4>
+                        <p>Advanced sensor suites (EO/IR, SAR) for extracting and processing real-time data streams.</p>
+                    </div>
+                    <div class="info-card stagger-item">
+                        <h4 style="color: var(--accent); margin-bottom: 2rem; font-family: 'JetBrains Mono'; font-size: 1.5rem;">EW & SWARM</h4>
+                        <p>Disrupting infrastructure via radar jamming and coordinating autonomous micro-node swarms.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tactical Deployment -->
+        <section id="scenarios" class="section-screen">
+            <div class="blur-overlay"></div>
+            <div class="section-content">
+                <h2>Tactical Deployment</h2>
+                <div class="content-row">
+                    <div class="text-side">
+                        <h3 style="color: var(--accent); margin-bottom: 2rem; font-size: 2.5rem; text-transform: uppercase;">Urban Saturation Swarm</h3>
+                        <p>Deploying 100+ micro-nodes in a decentralized mesh. Individual units navigate complex geometry while maintaining 360° awareness through distributed processing.</p>
+                        <ul class="feature-list">
+                            <li>Dynamic Pathfinding</li>
+                            <li>Self-Healing Mesh Network</li>
+                            <li>Distributed Signal Processing</li>
+                        </ul>
+                    </div>
+                    <div class="media-side">
+                        <div class="viewport">
+                            <div class="hud"><span>ACTIVE_SWARM_LOGIC</span></div>
+                            <video autoplay muted loop playsinline>
+                                <source src="media/istockphoto-2266365411-640_adpp_is.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="lab" class="section-screen">
+            <div class="blur-overlay"></div>
+            <div class="section-content">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6rem;">
+                    <h2>Engineering Lab</h2>
+                    <span style="font-family: 'JetBrains Mono'; color: var(--accent); font-size: 1rem; margin-bottom: 1.5rem;">[ RESEARCH_FACILITY_ALPHA ]</span>
+                </div>
+                <div class="stats-grid stagger-container">
+                    <div class="stat-card stagger-item">
+                        <span style="font-size: 0.8rem; opacity: 0.5; letter-spacing: 0.2em;">CPU_LOAD</span>
+                        <span class="stat-val" id="cpu">--</span>
+                    </div>
+                    <div class="stat-card stagger-item">
+                        <span style="font-size: 0.8rem; opacity: 0.5; letter-spacing: 0.2em;">LATENCY</span>
+                        <span class="stat-val" id="lat">--</span>
+                    </div>
+                    <div class="stat-card stagger-item">
+                        <span style="font-size: 0.8rem; opacity: 0.5; letter-spacing: 0.2em;">SIGNAL</span>
+                        <span class="stat-val" id="sig">--</span>
+                    </div>
+                    <div class="stat-card stagger-item">
+                        <span style="font-size: 0.8rem; opacity: 0.5; letter-spacing: 0.2em;">NODES</span>
+                        <span class="stat-val">64</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 2rem; letter-spacing: 0.15em;">PROUDLY CREATED BY MAYANK BHATT // 2026</p>
+            <p style="font-size: 0.9rem; color: var(--text-dim); opacity: 0.5; font-family: 'JetBrains Mono', monospace;">UAV_OS Tactical Specification Portal // All nodes online</p>
+        </footer>
+        </div>
+
+        <script>
         const observerOptions = {
-            threshold: 0.05,
-            rootMargin: '0px 0px -50px 0px'
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -413,8 +502,8 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.reveal, .reveal-scale, .reveal-slide-right, .reveal-slide-left, .stagger-container').forEach(el => {
-            observer.observe(el);
+        document.querySelectorAll('.section-screen').forEach(section => {
+            observer.observe(section);
         });
 
         // Stats Simulation
@@ -432,6 +521,6 @@
                 console.log("Autoplay prevented, awaiting interaction");
             });
         });
-    </script>
-</body>
-</html>
+        </script>
+        </body>
+        </html>
